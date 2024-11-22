@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PotHole Watch</title>
+    <!-- Bootstrap CSS for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" 
+    integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <!-- Leaflet CSS for map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body {
+            background-color: #f3e4d7; /* Set the background color for the entire page */
+        }
+        #map {
+            height: 500px;
+            margin-bottom: 30px; /* Space between map and form */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main container -->
+    <div class="container mt-5">
+
+        <!-- Map section (always displayed, centered on 15.4155° S, 28.2773° E) -->
+        <div class="text-right mb-4">
+            <h1 style="color: black;">PotHoleWatch</h1>
+            <div id="map" class="mt-4"></div>
+        </div>
+
+        <!-- Form for uploading an image to extract GPS coordinates -->
+        <div class="text-center mb-5">
+            <h2 style="color: black;">Extract GPS Coordinates and View on Map</h2>
+            <form action="/upload" method="POST" enctype="multipart/form-data" class="p-4 border rounded bg-white shadow">
+                <div class="mb-3">
+                    <input type="file" name="image" accept="image/*" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Upload Image</button>
+            </form>
+        </div>
+
+        <!-- Display extracted coordinates and map, if available -->
+        {% if map_html %}
+            <div class="text-center mt-4">
+                <h3>Extracted Coordinates: {{ coordinates }}</h3>
+                <div class="mt-4">{{ map_html|safe }}</div>
+            </div>
+        {% endif %}
+
+        <!-- Error handling -->
+        {% if error %}
+            <div class="alert alert-danger text-center mt-4">
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+
+        <!-- Previously extracted coordinates 
+        <div class="mt-5">
+            <h3>Previously Extracted Coordinates:</h3>
+            <pre>
+                {% if coordinates_file %}
+                    {{ coordinates_file }}
+                {% else %}
+                    No coordinates extracted yet.
+                {% endif %}
+            </pre>
+        </div> -->
+
+    </div>
+
+    <!-- Leaflet JS for map functionality -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <script>
+        // Initialize the map centered on the provided coordinates
+        var map = L.map('map').setView([-15.4155, 28.2773], 13); // 15.4155° S, 28.2773° E
+
+        // Add OpenStreetMap tiles to the map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+
+    </script>
+
+    <!-- Bootstrap JS (optional, for interactive components like modals, tooltips) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0v8Fqf3TtZhF7ZFlRVR8gZ41Tw9f8A8ZpjjH7Jmd5ftqYdB3" crossorigin="anonymous"></script>
+</body>
+</html>
